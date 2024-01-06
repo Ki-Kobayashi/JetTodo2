@@ -1,4 +1,4 @@
-package com.example.jettodo2.components
+package com.example.jettodo2.presenter.components
 
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Text

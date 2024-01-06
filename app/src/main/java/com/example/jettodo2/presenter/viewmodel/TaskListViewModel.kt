@@ -7,15 +7,17 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.jettodo2.data.repository.TaskRepository
-import com.example.jettodo2.database.entiry.TaskEntiry
+import com.example.jettodo2.database.entiry.TaskEntity
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class TaskListViewModel @Inject constructor(
-    private val repository: TaskRepository
+    private val repository: TaskRepository,
 ) : ViewModel() {
+    val taskList = repository.getAll()
+
     // 新規TODO追加：タイトル入力値の管理
 //    private var _title by mutableStateOf("")
 //    val title by State<>
@@ -36,7 +38,7 @@ class TaskListViewModel @Inject constructor(
     fun createTask(title: String, description: String) {
         // TODO: Flow/suspendは、コルーチン内で呼び出す
         viewModelScope.launch {
-            val newTask = TaskEntiry(
+            val newTask = TaskEntity(
                 title = title,
                 description = description,
                 done = 0,

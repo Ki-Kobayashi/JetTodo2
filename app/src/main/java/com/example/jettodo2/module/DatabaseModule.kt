@@ -2,7 +2,7 @@ package com.example.jettodo2.module
 
 import android.content.Context
 import androidx.room.Room
-import com.example.jettodo2.data.repository.LocalTaskRepostory
+import com.example.jettodo2.data.repository.LocalTaskRepository
 import com.example.jettodo2.data.repository.TaskRepository
 import com.example.jettodo2.database.AppDatabase
 import com.example.jettodo2.database.dao.TaskDao
@@ -49,6 +49,6 @@ object DatabaseModule {
     abstract class MainModule {
         @Binds
         @Singleton
-        abstract fun bindTaskRepository(impl: LocalTaskRepostory): TaskRepository
+        abstract fun bindTaskRepository(impl: LocalTaskRepository): TaskRepository
     }
 }

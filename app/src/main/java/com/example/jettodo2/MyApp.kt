@@ -9,6 +9,7 @@ import androidx.navigation.compose.rememberNavController
 import com.example.jettodo2.presenter.screen.CreateTaskScreen
 import com.example.jettodo2.presenter.screen.TaskListScreen
 import com.example.jettodo2.presenter.viewmodel.CreateTaskViewModel
+import com.example.jettodo2.presenter.viewmodel.TaskListViewModel
 
 @Composable
 fun MyApp(modifier: Modifier) {
@@ -16,7 +17,9 @@ fun MyApp(modifier: Modifier) {
     val navController = rememberNavController()
     NavHost(navController = navController, startDestination = "/") {
         composable("/") {
+            val vm: TaskListViewModel = hiltViewModel()
             TaskListScreen(
+                viewModel = vm,
                 toCreateTaskScreen = {
                     navController.navigate("/create")
                 },

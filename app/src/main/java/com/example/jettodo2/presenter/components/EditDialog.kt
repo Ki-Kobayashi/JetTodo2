@@ -1,4 +1,4 @@
-package com.example.jettodo2.components
+package com.example.jettodo2.presenter.components
 
 import android.util.Log
 import androidx.compose.foundation.layout.Column

@@ -1,4 +1,4 @@
-package com.example.jettodo2.components
+package com.example.jettodo2.presenter.components
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
