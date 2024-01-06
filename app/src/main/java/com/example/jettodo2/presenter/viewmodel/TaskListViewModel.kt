@@ -6,15 +6,16 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.jettodo2.data.repository.LocalTaskRepostory
+import com.example.jettodo2.data.repository.TaskRepository
 import com.example.jettodo2.database.entiry.TaskEntiry
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class TaskListViewModel @Inject constructor(private val repository: LocalTaskRepostory) :
-    ViewModel() {
+class TaskListViewModel @Inject constructor(
+    private val repository: TaskRepository
+) : ViewModel() {
     // 新規TODO追加：タイトル入力値の管理
 //    private var _title by mutableStateOf("")
 //    val title by State<>
