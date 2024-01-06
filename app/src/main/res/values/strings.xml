@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">JetTodo2</string>
+    <string name="create_task_title">新規タスク作成\n</string>
+    <string name="back">戻る</string>
+    <string name="label_title_field">タイトル</string>
+    <string name="label_description_field">詳細</string>
+    <string name="input_err_title">タイトルを入力してください。</string>
+    <string name="input_err_description">詳細を入力してください。</string>
+</resources>
