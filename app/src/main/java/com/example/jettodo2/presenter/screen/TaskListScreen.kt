@@ -16,6 +16,7 @@ import com.example.jettodo2.presenter.viewmodel.TaskListViewModel
 fun TaskListScreen(
     viewModel: TaskListViewModel,
     toCreateTaskScreen: () -> Unit,
+    onClickListRow: (Long) -> Unit,
     // TODO:下のように記載しない理由：MyApp.ktのNavHost設定で、
     //  　　　　　　　"hiltViewModel()"で外部から注入しているため
 //    viewModel: TaskListViewModel = hiltViewModel(),
@@ -23,13 +24,17 @@ fun TaskListScreen(
     // TODO: 下記は同じくタスクリストを取得する
     //      ・by : 直接DB取得値の taskList が格納される
     //      ・= :  DB取得値が state の状態で格納される（taskListにアクセスするには、.valueをつける必要がある）。
-    // TODO: collectAsStateメソッドは、StateFlowやFlowからデータを収集し、そのデータをCompose UIのStateオブジェクトに変換。
-    //       これにより、Composeが状態の変更を検知してUIを再描画できるように
+    // TODO: 【collectAsState】 : StateFlow　や　Flow　からデータを収集し、そのデータを　ComposeUI　の　State　オブジェクトに変換。
+    //       これにより、Compose が状態の変更を検知して UI を再描画できるようになる
     val taskList = viewModel.taskList.collectAsState(initial = emptyList()).value
     TaskListScreen(
-        toCreateTaskScreen = toCreateTaskScreen,
         taskList = taskList,
+        toCreateTaskScreen = toCreateTaskScreen,
+        onCheckedChange = { updatedTask ->
+            viewModel.updateTask(updatedTask)
+        },
         onDelete = {},
+        onClickListRow = onClickListRow
     )
 }
 
@@ -37,7 +42,9 @@ fun TaskListScreen(
 private fun TaskListScreen(
     taskList: List<Task>,
     toCreateTaskScreen: () -> Unit,
+    onCheckedChange: (Task) -> Unit,
     onDelete: (Task) -> Unit,
+    onClickListRow: (Long) -> Unit,
 ) {
     // TODO: Stateは画面回転時に初期化されてしまう：MainActivityが再描画されるため
     //    val isShowEditDialog = remember {
@@ -50,7 +57,7 @@ private fun TaskListScreen(
     //   ※下記コメント：viewModelで管理しない場合（FlutterのuseState的な感じ）
     // TODO: remember と rememberSavableの使い分け
     //      🌟 remember: 値が変化したときの再描トリガー
-    //      🌟 rememberSavable: ユーザーが行った操作の状態を保存・復元するのに使用（スクロール位置も含む）
+    //      🌟 rememberSaveable: ユーザーが行った操作の状態を保存・復元するのに使用（スクロール位置も含む）
 
 //    if (viewModel.isShowAddTaskDialog) {
 //        EditDialog()
@@ -87,10 +94,11 @@ private fun TaskListScreen(
         TaskList(
             paddingValues = paddingValues,
             taskList = taskList,
-            onClickItem = {},
+            onCheckedChange = onCheckedChange,
             onClickDelete = {
                 onDelete(it)
             },
+            onClickListRow = onClickListRow,
         )
 
     }
@@ -99,7 +107,12 @@ private fun TaskListScreen(
 @Preview
 @Composable
 private fun Preview() {
-//    TaskListScreen(
-//        toCreateScreen = {},
-//    )
+    TaskListScreen(
+        taskList = emptyList(),
+        toCreateTaskScreen = {},
+        // TODO: 使用しない引数の時は「_」表記
+        onCheckedChange = { _ -> },
+        onDelete = { _ -> },
+        onClickListRow = { _ -> }
+    )
 }

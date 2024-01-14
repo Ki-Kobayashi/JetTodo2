@@ -31,7 +31,6 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.jettodo2.R
-import com.example.jettodo2.common.UiState
 import com.example.jettodo2.presenter.viewmodel.CreateTaskViewModel
 
 
@@ -63,11 +62,14 @@ fun CreateTaskScreen(
 private fun CreateTaskContent(
     onBack: () -> Unit,
     onCreate: (String, String) -> Unit,
-    uiState: UiState,
+    uiState: CreateTaskViewModel.UiState,
     changeIdle: () -> Unit,
 ) {
     // TODO: ComposableのContextを取得するには、以下のように書く
     val context = LocalContext.current
+    // TODO: remember と rememberSavable　の使い分け【両方とも、viewModelよりライフサイクルは短い】
+    //      🌟 remember: 値が変化したときの再描トリガー（画面回転後、Activityの再生成後はdisposeされ、値が初期化されてしまう）
+    //      🌟 rememberSaveable: ユーザーが行った操作の状態を保存・復元するのに使用（画面回転やスクロール位置も含む）
     var title by rememberSaveable {
         mutableStateOf("")
     }
@@ -79,9 +81,11 @@ private fun CreateTaskContent(
     }
 
     // TODO:値が変化したときに”1度だけ”処理させる（引数には、監視対象の変数を入れる）
-    // TODO: LaunchedEffectがコンポジションに入ると、コンポジションのCoroutineContextにブロックを起動
-    //   LaunchedEffectを使用しない場合（※：onClick内などComposable内でない場合）は、以下のコメントアウトのように書く
-    //          🚨※ 重要 ※　UIを組み立てるComposabel内でコルーチンを使用する場合は、LaunchedEffectを使用すること.
+    // TODO: 【LaunchedEffect】：コンポジション（画面構築）に入ると、コンポジションのCoroutineContextにブロックを起動
+    //      🚨※ 重要 ※
+    //         ※ UI を組み立てる Composable 内でコルーチンを使用する（ suspend 関数を呼び出す）場合は、LaunchedEffect を使用すること.
+    //         ※ LaunchedEffect を使用しない場合（※：onClick内など Composable 内でない場合）は、以下のコメントアウトのように書く
+    //
     //    val scope = rememberCoroutineScope()
     //    scope.launch {
     //        snackbarState.showSnackbar("スナックバーに表示させたい文言")
@@ -89,11 +93,11 @@ private fun CreateTaskContent(
 
     LaunchedEffect(uiState) {
         when (uiState) {
-            is UiState.CreateError -> {
+            is CreateTaskViewModel.UiState.CreateError -> {
                 uiState.e.message?.let { snackbarState.showSnackbar(it) }
             }
 
-            is UiState.InputErr -> {
+            is CreateTaskViewModel.UiState.InputErr -> {
                 // TODO: ここでは stringResuorce は呼べない
                 //  （ Composable 呼び出しは、@Composable 関数のコンテキストからのみ可能）
                 //  　　→ showSnackBar :
@@ -105,11 +109,11 @@ private fun CreateTaskContent(
                 changeIdle()
             }
 
-            UiState.Idle -> {
+            CreateTaskViewModel.UiState.Idle -> {
                 // 何もしない
             }
 
-            UiState.Success -> {
+            CreateTaskViewModel.UiState.Success -> {
                 onBack()
                 changeIdle()
             }
@@ -123,6 +127,7 @@ private fun CreateTaskContent(
             TopAppBar(
                 title = {
                     Text(
+                        // TODO: Composable内では、「stringResource」を使用してstring.xmlの値を読み出せる（Composable以外は不可）
                         text = stringResource(id = R.string.create_task_title),
                         // TODO: これをいれないと、アイコンとタイトルがズレる（タイトルがTopにへばりつく形）
                         maxLines = 1,
@@ -157,7 +162,7 @@ private fun CreateTaskContent(
             OutlinedTextField(
                 value = title,
                 label = { Text(text = stringResource(id = R.string.label_title_field)) },
-                singleLine = true,
+                singleLine = true, // デフォルトはfalse（複数行）
                 modifier = Modifier
                     .padding(
                         vertical = 8.dp,
@@ -187,7 +192,7 @@ private fun Preview() {
     CreateTaskContent(
         onBack = {},
         onCreate = { _, _ -> },
-        uiState = UiState.Idle,
+        uiState = CreateTaskViewModel.UiState.Idle,
         changeIdle = {}
     )
 }

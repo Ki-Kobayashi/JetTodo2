@@ -1,8 +1,8 @@
 package com.example.jettodo2.presenter.viewmodel
 
+import androidx.compose.runtime.Stable
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.jettodo2.common.UiState
 import com.example.jettodo2.data.repository.TaskRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -21,6 +21,7 @@ class CreateTaskViewModel @Inject constructor(
     val uiState: StateFlow<UiState> = _uiState.asStateFlow()
 
     fun create(title: String, description: String) {
+        // 入力チェック
         if (title.trim().isEmpty()) {
             _uiState.value =
 //                UiState.InputErr(errMessage = stringResource(id = R.string.input_err_title))
@@ -43,6 +44,7 @@ class CreateTaskViewModel @Inject constructor(
             return
         }
         try {
+            // TODO: Flow/suspendは、コルーチン内で呼び出す
             viewModelScope.launch {
                 taskRepository.create(title, description)
             }
@@ -54,5 +56,14 @@ class CreateTaskViewModel @Inject constructor(
 
     fun changeIdle() {
         _uiState.value = UiState.Idle
+    }
+
+    // TODO: ViewのUiStateは、ViewModelにまとめておく
+    @Stable
+    sealed interface UiState {
+        data object Idle : UiState
+        data object Success : UiState
+        data class InputErr(val errMessage: String) : UiState
+        data class CreateError(val e: Exception) : UiState
     }
 }

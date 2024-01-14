@@ -7,7 +7,7 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.jettodo2.data.repository.TaskRepository
-import com.example.jettodo2.database.entiry.TaskEntity
+import com.example.jettodo2.domain.model.Task
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -38,16 +38,21 @@ class TaskListViewModel @Inject constructor(
     fun createTask(title: String, description: String) {
         // TODO: Flow/suspendは、コルーチン内で呼び出す
         viewModelScope.launch {
-            val newTask = TaskEntity(
-                title = title,
-                description = description,
-                done = 0,
-                updatedAt = System.currentTimeMillis(),
-                createdAt = System.currentTimeMillis(),
-            )
             val task = repository.create(title = title, description = description)
 //            taskDao.insertTask(newTask)
             Log.d(TaskListViewModel::class.simpleName, "created task: $task")
+        }
+    }
+
+    fun updateTask(updatedTask: Task) {
+        // TODO: Flow/suspendは、コルーチン内で呼び出す
+        viewModelScope.launch {
+            try {
+                repository.updateTask(updatedTask)
+            } catch (e: Exception) {
+                // TODO;万が一更新に失敗した場合は、画面側に何か表示した方がいい
+                Log.d("", e.toString())
+            }
         }
     }
 

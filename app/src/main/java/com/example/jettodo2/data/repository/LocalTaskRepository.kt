@@ -34,27 +34,45 @@ class LocalTaskRepository @Inject constructor(
 
     override fun getAll(): Flow<List<Task>> {
         return taskDao.getAllTask().map { taskList ->
-            taskList.map { task ->
-                Task(
-                    id = task.id,
-                    title = task.title,
-                    description = task.description,
-                    isDone = task.done == 1,
-                    updatedAt = Date(task.updatedAt),
-                    createdAt = Date(task.createdAt),
-                )
+            taskList.map { taskEntity ->
+                taskEntity.toModel()
             }
 
         }
     }
 
-//    override fun getAll(): Flow<List<Task>> {
-//        val taskList = taskDao.getAllTask()
-//        taskList.map { task ->
-//            Task(
-//                 id = task.id
+    override suspend fun getTaskById(id: Long): Task? {
+        return taskDao.getTaskById(id)?.toModel()
+    }
 
-//            )
-//        }
-//    }
+    override suspend fun updateTask(updatedTask: Task) {
+        val entity = TaskEntity(
+            id = updatedTask.id,
+            title = updatedTask.title,
+            description = updatedTask.description,
+            done = if (updatedTask.isDone) DONE else NOT_DONE,
+            updatedAt = System.currentTimeMillis(),
+            createdAt = updatedTask.createdAt.time,
+        )
+        taskDao.updateTask(entity)
+    }
+
+    // TODO: 【拡張関数】以下のように書くことで、taskEntiry.toModel()と呼ぶことで、
+    //  　　　　Task型として取得できるようになる
+    //  　　　　　※：自身（例：taskEntity）を表すときは、関数内で「this」を使用する。
+    private fun TaskEntity.toModel(): Task {
+        return Task(
+            id = id,
+            title = title,
+            description = description,
+            isDone = done == 1,
+            createdAt = Date(createdAt),
+            updatedAt = Date(updatedAt),
+        )
+    }
+
+    companion object {
+        private const val DONE: Int = 1
+        private const val NOT_DONE: Int = 0
+    }
 }

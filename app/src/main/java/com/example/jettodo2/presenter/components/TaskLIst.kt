@@ -11,8 +11,9 @@ import com.example.jettodo2.domain.model.Task
 fun TaskList(
     paddingValues: PaddingValues,
     taskList: List<Task>,
-    onClickItem: (Task) -> Unit,
+    onCheckedChange: (Task) -> Unit,
     onClickDelete: (Task) -> Unit,
+    onClickListRow: (Long) -> Unit,
 ) {
     LazyColumn(
         verticalArrangement = Arrangement.spacedBy(8.dp),
@@ -21,11 +22,13 @@ fun TaskList(
         items(
 //            items = taskList,
             count = taskList.size,
+            // TODO: 複数アイテムを配置する場合、Keyを付与することで、変化している箇所（削除・並び替え・末尾以外の追加）だけを再コンポ―スできるようになる
             key = { index -> taskList[index].id },
         ) { index ->
             TaskItemView(
                 task = taskList[index],
-                onClickItem = onClickItem,
+                onCheckedChange = onCheckedChange,
+                onClickItem = onClickListRow,
                 onClickDelete = onClickDelete,
             )
         }
