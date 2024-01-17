@@ -15,6 +15,8 @@ import com.example.jettodo2.presenter.viewmodel.CreateTaskViewModel
 import com.example.jettodo2.presenter.viewmodel.EditTaskViewModel
 import com.example.jettodo2.presenter.viewmodel.TaskListViewModel
 
+//　TODO:スナックバーの表示（非同期で実行される）
+
 @Composable
 fun MyApp(modifier: Modifier) {
     // TODO: Navを追加するには、以下のように書く
@@ -52,16 +54,10 @@ fun MyApp(modifier: Modifier) {
             )
         ) {
             val vm: EditTaskViewModel = hiltViewModel()
-            EditTaskScreen(viewModel = vm)
+            EditTaskScreen(
+                viewModel = vm,
+                back = { navController.popBackStack() },
+            )
         }
-//        composable("/detail", arguments = []) {
-//            TaskDetailScreen(task =)
-//        }
     }
-//    Surface(
-//        modifier = modifier,
-//        color = MaterialTheme.colorScheme.background
-//    ) {
-//        MainContent()
-//    }
 }

@@ -21,6 +21,11 @@ class CreateTaskViewModel @Inject constructor(
     val uiState: StateFlow<UiState> = _uiState.asStateFlow()
 
     fun create(title: String, description: String) {
+        val currentState = _uiState.value
+        if (currentState !is UiState.Idle) {
+            return
+        }
+        _uiState.value = UiState.CreateInProgress
         // 入力チェック
         if (title.trim().isEmpty()) {
             _uiState.value =
@@ -43,14 +48,14 @@ class CreateTaskViewModel @Inject constructor(
                 )
             return
         }
-        try {
-            // TODO: Flow/suspendは、コルーチン内で呼び出す
-            viewModelScope.launch {
+        // TODO: Flow/suspendは、コルーチン内で呼び出す
+        viewModelScope.launch {
+            try {
                 taskRepository.create(title, description)
+                _uiState.value = UiState.CreateSuccess
+            } catch (e: Exception) {
+                _uiState.value = UiState.CreateError(e)
             }
-            _uiState.value = UiState.Success
-        } catch (e: Exception) {
-            _uiState.value = UiState.CreateError(e)
         }
     }
 
@@ -62,8 +67,10 @@ class CreateTaskViewModel @Inject constructor(
     @Stable
     sealed interface UiState {
         data object Idle : UiState
-        data object Success : UiState
+
         data class InputErr(val errMessage: String) : UiState
+        data object CreateInProgress : UiState
+        data object CreateSuccess : UiState
         data class CreateError(val e: Exception) : UiState
     }
 }

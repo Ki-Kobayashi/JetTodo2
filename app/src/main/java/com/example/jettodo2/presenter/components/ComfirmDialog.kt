@@ -32,7 +32,7 @@ fun ConfirmDialog(
             }
         },
         dismissButton = {
-            onClickCancel
+            onClickCancel()
         },
     )
 }

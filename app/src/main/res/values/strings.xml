@@ -1,9 +1,13 @@
 <resources>
     <string name="app_name">JetTodo2</string>
-    <string name="create_task_title">新規タスク作成\n</string>
+    <string name="create_task_title">新規タスク作成</string>
     <string name="back">戻る</string>
     <string name="label_title_field">タイトル</string>
     <string name="label_description_field">詳細</string>
     <string name="input_err_title">タイトルを入力してください。</string>
     <string name="input_err_description">詳細を入力してください。</string>
+    <string name="edit_task_title">タスクの編集</string>
+    <string name="button_delete">削除</string>
+    <string name="confirm_dialog_title">タスクを削除してよろしいですか？</string>
+    <string name="deleted_task_sccess">タスクを削除しました</string>
 </resources>

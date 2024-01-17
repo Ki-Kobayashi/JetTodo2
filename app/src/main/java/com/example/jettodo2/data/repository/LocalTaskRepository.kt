@@ -46,15 +46,21 @@ class LocalTaskRepository @Inject constructor(
     }
 
     override suspend fun updateTask(updatedTask: Task) {
-        val entity = TaskEntity(
-            id = updatedTask.id,
-            title = updatedTask.title,
-            description = updatedTask.description,
-            done = if (updatedTask.isDone) DONE else NOT_DONE,
-            updatedAt = System.currentTimeMillis(),
-            createdAt = updatedTask.createdAt.time,
-        )
+//        val entity = TaskEntity(
+//            id = updatedTask.id,
+//            title = updatedTask.title,
+//            description = updatedTask.description,
+//            done = if (updatedTask.isDone) DONE else NOT_DONE,
+//            updatedAt = System.currentTimeMillis(),
+//            createdAt = updatedTask.createdAt.time,
+//        )
+        val entity = updatedTask.toEntity()
         taskDao.updateTask(entity)
+    }
+
+    override suspend fun deleteTask(deleteTask: Task) {
+        val entity = deleteTask.toEntity()
+        taskDao.deleteTask(entity)
     }
 
     // TODO: 【拡張関数】以下のように書くことで、taskEntiry.toModel()と呼ぶことで、
@@ -68,6 +74,17 @@ class LocalTaskRepository @Inject constructor(
             isDone = done == 1,
             createdAt = Date(createdAt),
             updatedAt = Date(updatedAt),
+        )
+    }
+
+    private fun Task.toEntity(): TaskEntity {
+        return TaskEntity(
+            id = id,
+            title = title,
+            description = description,
+            done = if (isDone) DONE else NOT_DONE,
+            createdAt = createdAt.time,
+            updatedAt = updatedAt.time,
         )
     }
 

@@ -93,6 +93,11 @@ private fun CreateTaskContent(
 
     LaunchedEffect(uiState) {
         when (uiState) {
+            CreateTaskViewModel.UiState.CreateSuccess -> {
+                onBack()
+                changeIdle()
+            }
+
             is CreateTaskViewModel.UiState.CreateError -> {
                 uiState.e.message?.let { snackbarState.showSnackbar(it) }
             }
@@ -109,14 +114,7 @@ private fun CreateTaskContent(
                 changeIdle()
             }
 
-            CreateTaskViewModel.UiState.Idle -> {
-                // 何もしない
-            }
-
-            CreateTaskViewModel.UiState.Success -> {
-                onBack()
-                changeIdle()
-            }
+            else -> {}
         }
     }
     Scaffold(
